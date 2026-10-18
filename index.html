@@ -1,0 +1,313 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<meta name="color-scheme" content="light">
+<title>Status | D'Alton's School of Bio-Energy Healing</title>
+<meta name="description" content="Whether the D'Alton's School of Bio-Energy Healing website, sign in, checkout and lessons are working right now.">
+<link rel="icon" href="favicon.png" type="image/png">
+<link rel="apple-touch-icon" href="apple-touch-icon.png">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Lato:wght@400;700&family=Merriweather:wght@400;700&display=swap" rel="stylesheet">
+<style>
+  :root {
+    --ground: #ffffff;
+    --panel: #f6f7fa;
+    --primary: #5c6d87;
+    --primary-hover: #4f5f78;
+    --ink: #333333;
+    --ink-deep: #222a37;
+    --muted: #5c6779;
+    --line: #e6e7eb;
+    --ok: #1f7a3d;
+    --ok-bar: #3f9a5c;
+    --warn: #b45309;
+    --warn-bar: #d68a2e;
+    --down: #b3261e;
+    --empty: #dfe3e9;
+    --focus: #c83b18;
+    --radius: 6px;
+    --display: Merriweather, Georgia, "Times New Roman", serif;
+    --body: Lato, "Segoe UI", Arial, sans-serif;
+  }
+  *, *::before, *::after { box-sizing: border-box; }
+  html { color-scheme: light; -webkit-text-size-adjust: 100%; }
+  body {
+    margin: 0;
+    background: var(--ground);
+    color: var(--ink);
+    font: 400 1rem/1.6 var(--body);
+  }
+  a { color: var(--primary); text-underline-offset: .18em; }
+  a:hover { color: var(--primary-hover); }
+  :focus-visible { outline: 3px solid var(--focus); outline-offset: 3px; border-radius: 2px; }
+  .wrap { width: min(100% - 2.5rem, 46rem); margin-inline: auto; }
+
+  header { border-bottom: 1px solid var(--line); }
+  header .wrap { display: flex; align-items: center; justify-content: space-between; gap: 1rem; min-height: 76px; }
+  .brand { display: inline-flex; }
+  .brand img { display: block; height: 46px; width: auto; }
+  .back { font-size: .95rem; }
+
+  /* The answer to "is it working?": a band across the top in the state's colour. */
+  .answer { background: var(--band); border-bottom: 1px solid var(--band-edge); padding-block: clamp(2.25rem, 6vw, 3.25rem); margin-bottom: clamp(2rem, 5vw, 2.75rem);
+    --band: var(--panel); --band-edge: var(--line); --icon: #8a94a5; --sub: var(--muted); }
+  [data-overall="ok"] .answer { --band: #e4f3e9; --band-edge: #bfe0c9; --icon: var(--ok); --sub: #2f4f3a; }
+  [data-overall="down"] .answer { --band: #fdf0e1; --band-edge: #f0cfa6; --icon: var(--warn); --sub: #5c3b12; }
+  .answer .wrap { display: flex; gap: clamp(.9rem, 2.5vw, 1.25rem); align-items: flex-start; }
+  .answer .icon { flex: none; width: clamp(2.4rem, 1.9rem + 1.8vw, 3rem); height: clamp(2.4rem, 1.9rem + 1.8vw, 3rem); margin-top: .15em;
+    border-radius: 50%; background: var(--icon); color: #fff; display: grid; place-items: center; }
+  .answer .icon svg { width: 55%; height: 55%; }
+  .answer .icon .if-ok, .answer .icon .if-down { display: none; }
+  [data-overall="ok"] .answer .icon .if-ok, [data-overall="down"] .answer .icon .if-down { display: block; }
+  .answer h1 {
+    margin: 0;
+    font: 700 clamp(1.9rem, 1.3rem + 2.6vw, 3rem)/1.18 var(--display);
+    color: var(--ink-deep);
+    letter-spacing: -.01em;
+  }
+  .answer p { margin: .9rem 0 0; color: var(--sub); max-width: 52ch; }
+
+  .parts { border: 1px solid var(--line); border-radius: var(--radius); }
+  .part { padding: 1.25rem 1.4rem 1.15rem; }
+  .part + .part { border-top: 1px solid var(--line); }
+  .part-head { display: flex; justify-content: space-between; align-items: baseline; gap: 1rem; }
+  .part h2 { margin: 0; font: 700 1.1rem/1.3 var(--display); color: var(--ink-deep); }
+  .part .what { margin: .15rem 0 0; color: var(--muted); font-size: .95rem; }
+  .state { font-weight: 700; white-space: nowrap; color: var(--muted); }
+  .state[data-state="up"] { color: var(--ok); }
+  .state[data-state="down"] { color: var(--down); }
+  .bars { display: flex; gap: 2px; height: 30px; margin-top: 1rem; }
+  .bars span { flex: 1; border-radius: 2px; background: var(--empty); }
+  .bars span[data-day="ok"] { background: var(--ok-bar); }
+  .bars span[data-day="some"] { background: var(--warn-bar); }
+  .bars span[data-day="bad"] { background: var(--down); }
+  .bar-scale { display: flex; justify-content: space-between; gap: 1rem; margin-top: .35rem; font-size: .8rem; color: var(--muted); white-space: nowrap; }
+  .bar-summary { margin: .3rem 0 0; font-size: .95rem; color: var(--ink); }
+
+  .problems { padding-block: clamp(2.5rem, 6vw, 3.5rem) 0; }
+  .problems h2 { margin: 0 0 1rem; font: 700 1.45rem/1.3 var(--display); color: var(--ink-deep); }
+  .problems ol { list-style: none; margin: 0; padding: 0; }
+  .problem { padding: 1.1rem 0; border-top: 1px solid var(--line); }
+  .problem:last-child { border-bottom: 1px solid var(--line); }
+  .problem h3 { margin: 0; font: 700 1.05rem/1.4 var(--body); color: var(--ink-deep); }
+  .problem .when { margin: .2rem 0 0; font-size: .9rem; color: var(--muted); }
+  .problem .open { color: var(--down); font-weight: 700; }
+  .problem .closed { color: var(--ok); font-weight: 700; }
+  .update { margin: .75rem 0 0; padding-left: .9rem; border-left: 3px solid var(--line); }
+  .update p { margin: 0; }
+  .update time { display: block; font-size: .85rem; color: var(--muted); }
+  .none { margin: 0; color: var(--muted); }
+
+  footer { margin-top: clamp(3rem, 8vw, 5rem); padding-block: 1.75rem 2.5rem; border-top: 1px solid var(--line); color: var(--muted); font-size: .95rem; }
+  footer p { margin: 0; }
+
+  @media (max-width: 34rem) {
+    .bars { gap: 1px; height: 26px; }
+    .part { padding-inline: 1rem; }
+    .brand img { height: 38px; }
+  }
+</style>
+</head>
+<body>
+<header>
+  <div class="wrap">
+    <a class="brand" href="https://www.daltonsbio.com"><img src="logo.png" alt="D'Alton's School of Bio-Energy Healing" width="600" height="136"></a>
+    <a class="back" href="https://www.daltonsbio.com">Back to the school</a>
+  </div>
+</header>
+
+<section class="answer" aria-live="polite">
+  <div class="wrap">
+    <span class="icon" aria-hidden="true">
+      <svg class="if-ok" viewBox="0 0 24 24"><path d="M20 6 9 17l-5-5" fill="none" stroke="currentColor" stroke-width="3" stroke-linecap="round" stroke-linejoin="round"/></svg>
+      <svg class="if-down" viewBox="0 0 24 24"><path d="M12 6v8M12 18.5v.01" fill="none" stroke="currentColor" stroke-width="3" stroke-linecap="round"/></svg>
+    </span>
+    <div>
+      <h1 id="headline">Checking the school's services</h1>
+      <p id="checked">We check the website, sign in, checkout and lessons every five minutes.</p>
+    </div>
+  </div>
+</section>
+
+<main class="wrap">
+  <section class="parts" aria-label="Each part of the school's website" id="parts"></section>
+
+  <section class="problems" aria-labelledby="problems-title">
+    <h2 id="problems-title">Recent problems</h2>
+    <div id="problem-list"><p class="none">Loading.</p></div>
+  </section>
+</main>
+
+<footer>
+  <div class="wrap">
+    <p>Something not working that is not listed here? Email <a href="mailto:info@daltonsbio.com">info@daltonsbio.com</a>.</p>
+  </div>
+</footer>
+
+<script>
+(() => {
+  const REPO = "dalton-projects/daltonsbio-status";
+  const RAW = `https://raw.githubusercontent.com/${REPO}/master`;
+  const DAYS = 90;
+  const DAY = 24 * 60 * 60 * 1000;
+  const PARTS = [
+    { slug: "website", name: "Website", what: "The school's pages and blog", trouble: "The website is having problems" },
+    { slug: "signing-in", name: "Signing in", what: "Your account, dashboard and progress", trouble: "Signing in is having problems" },
+    { slug: "buying-a-course", name: "Buying a course", what: "Checkout and payments", trouble: "Buying a course is having problems" },
+    { slug: "lessons", name: "Lessons", what: "Course videos, audio and downloads", trouble: "Lessons are having problems" },
+  ];
+
+  const $ = (id) => document.getElementById(id);
+  const esc = (s) => String(s).replace(/[&<>"']/g, (c) => ({ "&": "&amp;", "<": "&lt;", ">": "&gt;", '"': "&quot;", "'": "&#39;" })[c]);
+  const dayKey = (d) => d.toISOString().slice(0, 10);
+  const longDate = (d) => d.toLocaleDateString("en-CA", { day: "numeric", month: "long", year: "numeric" });
+  const stamp = (d) => d.toLocaleString("en-CA", { day: "numeric", month: "long", hour: "numeric", minute: "2-digit" });
+
+  function ago(date) {
+    const mins = Math.round((Date.now() - date.getTime()) / 60000);
+    if (mins < 1) return "less than a minute ago";
+    if (mins === 1) return "1 minute ago";
+    if (mins < 60) return `${mins} minutes ago`;
+    const hours = Math.round(mins / 60);
+    return hours === 1 ? "1 hour ago" : `${hours} hours ago`;
+  }
+
+  function list(words) {
+    return words.length < 2 ? words.join("") : `${words.slice(0, -1).join(", ")} and ${words.at(-1)}`;
+  }
+
+  async function text(path) {
+    const r = await fetch(`${RAW}/${path}?t=${Math.floor(Date.now() / 60000)}`);
+    if (!r.ok) throw new Error(path);
+    return r.text();
+  }
+
+  function field(yaml, name) {
+    const m = new RegExp(`^${name}:\\s*(.+)$`, "m").exec(yaml);
+    return m ? m[1].trim() : null;
+  }
+
+  function bars(start, minutesDown) {
+    const today = new Date(); today.setUTCHours(0, 0, 0, 0);
+    const first = new Date(start); first.setUTCHours(0, 0, 0, 0);
+    let html = "", downDays = 0, checkedDays = 0;
+    for (let i = DAYS - 1; i >= 0; i--) {
+      const day = new Date(today.getTime() - i * DAY);
+      const key = dayKey(day);
+      let state = "none", label = `${longDate(day)}: not checked yet`;
+      if (day >= first) {
+        checkedDays++;
+        const mins = Number(minutesDown[key] || 0);
+        if (mins === 0) { state = "ok"; label = `${longDate(day)}: no problems`; }
+        else {
+          downDays++;
+          state = mins >= 60 ? "bad" : "some";
+          label = `${longDate(day)}: down for ${mins} minute${mins === 1 ? "" : "s"}`;
+        }
+      }
+      html += `<span data-day="${state}" title="${esc(label)}"></span>`;
+    }
+    return { html, downDays, checkedDays };
+  }
+
+  function partHtml(p, row, history) {
+    const state = row ? row.status : "unknown";
+    const word = state === "up" ? "Working" : state === "down" ? "Down" : "Not checked yet";
+    const start = field(history, "startTime") || new Date().toISOString();
+    const b = bars(start, (row && row.dailyMinutesDown) || {});
+    const summary = b.checkedDays === 0 ? "No checks yet"
+      : b.downDays === 0 ? (b.checkedDays === 1 ? "No problems today" : `No problems in the last ${b.checkedDays} days`)
+      : `Problems on ${b.downDays} of the last ${b.checkedDays} days`;
+    return `<article class="part">
+      <div class="part-head">
+        <div><h2>${esc(p.name)}</h2><p class="what">${esc(p.what)}</p></div>
+        <span class="state" data-state="${state}">${word}</span>
+      </div>
+      <div class="bars" role="img" aria-label="${esc(p.name)}, last ${DAYS} days: ${esc(summary)}">${b.html}</div>
+      <div class="bar-scale" aria-hidden="true"><span>${DAYS} days ago</span><span>Today</span></div>
+      <p class="bar-summary">${esc(summary)}</p>
+    </article>`;
+  }
+
+  async function loadParts() {
+    const [summary, ...histories] = await Promise.all([
+      text("history/summary.json").then(JSON.parse),
+      ...PARTS.map((p) => text(`history/${p.slug}.yml`).catch(() => "")),
+    ]);
+    const bySlug = Object.fromEntries(summary.map((r) => [r.slug, r]));
+    $("parts").innerHTML = PARTS.map((p, i) => partHtml(p, bySlug[p.slug], histories[i])).join("");
+
+    const down = PARTS.filter((p) => bySlug[p.slug] && bySlug[p.slug].status === "down");
+    document.body.dataset.overall = down.length ? "down" : "ok";
+    $("headline").textContent = down.length === 0 ? "Everything is working"
+      : down.length === PARTS.length ? "The school's website is down"
+      : down.length === 1 ? down[0].trouble
+      : `${list(down.map((p) => p.name.toLowerCase())).replace(/^./, (c) => c.toUpperCase())} are having problems`;
+
+    // The history files only change when a part goes up or down, so the time of
+    // the last check comes from the checking job itself.
+    const last = await fetch(`https://api.github.com/repos/${REPO}/actions/workflows/uptime.yml/runs?status=success&per_page=1`, { headers: { Accept: "application/vnd.github+json" } })
+      .then((r) => (r.ok ? r.json() : null))
+      .then((j) => (j && j.workflow_runs && j.workflow_runs[0] ? new Date(j.workflow_runs[0].updated_at) : null))
+      .catch(() => null);
+    const late = last && Date.now() - last.getTime() > 15 * 60000;
+    const when = !last ? "" : late ? ` Last checked ${ago(last)}, so these results may be out of date.` : ` Last checked ${ago(last)}.`;
+    $("checked").textContent = down.length === 0
+      ? `We check the website, sign in, checkout and lessons every five minutes.${when}`
+      : `We know about it and are working on it. Updates appear below.${when}`;
+  }
+
+  // The checker titles its issues "Lessons is down"; say it the way a person would.
+  const plainTitle = (t, auto) => {
+    const clean = t.replace(/^[^\p{L}\p{N}]+/u, "").trim();
+    const part = auto && PARTS.find((p) => clean.toLowerCase().startsWith(p.name.toLowerCase()));
+    return part ? `${part.name} stopped working` : clean;
+  };
+  const isBot = (u) => !u || u.type === "Bot" || /\[bot\]$/.test(u.login || "");
+
+  async function loadProblems() {
+    const since = new Date(Date.now() - DAYS * DAY).toISOString();
+    const r = await fetch(`https://api.github.com/repos/${REPO}/issues?state=all&since=${since}&per_page=20`, { headers: { Accept: "application/vnd.github+json" } });
+    if (!r.ok) throw new Error("issues");
+    const issues = (await r.json()).filter((i) => !i.pull_request && new Date(i.created_at) >= new Date(since));
+    if (issues.length === 0) {
+      $("problem-list").innerHTML = `<p class="none">No problems reported.</p>`;
+      return;
+    }
+    const withUpdates = await Promise.all(issues.map(async (i) => {
+      let updates = [];
+      if (i.comments > 0) {
+        const c = await fetch(i.comments_url, { headers: { Accept: "application/vnd.github+json" } }).then((x) => (x.ok ? x.json() : [])).catch(() => []);
+        updates = c.filter((u) => !isBot(u.user));
+      }
+      const note = !isBot(i.user) && i.body ? [{ body: i.body, created_at: i.created_at }] : [];
+      return { i, updates: [...note, ...updates] };
+    }));
+    $("problem-list").innerHTML = `<ol>${withUpdates.map(({ i, updates }) => {
+      const opened = new Date(i.created_at);
+      const status = i.state === "open"
+        ? `<span class="open">Ongoing</span>, started ${esc(stamp(opened))}`
+        : `<span class="closed">Resolved</span> ${esc(stamp(new Date(i.closed_at)))}, started ${esc(stamp(opened))}`;
+      return `<li class="problem">
+        <h3>${esc(plainTitle(i.title, isBot(i.user)))}</h3>
+        <p class="when">${status}</p>
+        ${updates.map((u) => `<div class="update"><time datetime="${esc(u.created_at)}">${esc(stamp(new Date(u.created_at)))}</time><p>${esc(u.body)}</p></div>`).join("")}
+      </li>`;
+    }).join("")}</ol>`;
+  }
+
+  loadParts().catch(() => {
+    document.body.dataset.overall = "unknown";
+    $("headline").textContent = "We could not load the latest checks";
+    $("checked").textContent = "Refresh the page in a minute. If something is not working for you, email info@daltonsbio.com.";
+  });
+  loadProblems().catch(() => {
+    $("problem-list").innerHTML = `<p class="none">Recent problems could not be loaded. Refresh the page in a minute.</p>`;
+  });
+})();
+</script>
+</body>
+</html>
