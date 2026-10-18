@@ -68,6 +68,7 @@
     color: var(--ink-deep);
     letter-spacing: -.01em;
   }
+  .visually-hidden { position: absolute; width: 1px; height: 1px; overflow: hidden; clip: rect(0 0 0 0); white-space: nowrap; }
   .answer p { margin: .9rem 0 0; color: var(--sub); max-width: 52ch; }
 
   .parts { border: 1px solid var(--line); border-radius: var(--radius); }
@@ -87,27 +88,70 @@
   .bar-scale { display: flex; justify-content: space-between; gap: 1rem; margin-top: .35rem; font-size: .8rem; color: var(--muted); white-space: nowrap; }
   .bar-summary { margin: .3rem 0 0; font-size: .95rem; color: var(--ink); }
 
-  .problems { padding-block: clamp(2.5rem, 6vw, 3.5rem) 0; }
-  .problems h2 { margin: 0 0 1rem; font: 700 1.45rem/1.3 var(--display); color: var(--ink-deep); }
-  .problems ol { list-style: none; margin: 0; padding: 0; }
-  .problem { padding: 1.1rem 0; border-top: 1px solid var(--line); }
-  .problem:last-child { border-bottom: 1px solid var(--line); }
-  .problem h3 { margin: 0; font: 700 1.05rem/1.4 var(--body); color: var(--ink-deep); }
-  .problem .when { margin: .2rem 0 0; font-size: .9rem; color: var(--muted); }
-  .problem .open { color: var(--down); font-weight: 700; }
-  .problem .closed { color: var(--ok); font-weight: 700; }
-  .update { margin: .75rem 0 0; padding-left: .9rem; border-left: 3px solid var(--line); }
-  .update p { margin: 0; }
-  .update time { display: block; font-size: .85rem; color: var(--muted); }
-  .none { margin: 0; color: var(--muted); }
+  .history { padding-top: clamp(2.75rem, 7vw, 4rem); }
+  .tabs { display: flex; gap: .25rem; border-bottom: 1px solid var(--line); }
+  .tabs button { font: 400 1rem/1 var(--body); color: var(--muted); background: none; cursor: pointer;
+    border: 1px solid transparent; border-bottom: 0; border-radius: var(--radius) var(--radius) 0 0;
+    padding: .85rem 1.15rem; margin-bottom: -1px; }
+  .tabs button:hover { color: var(--ink-deep); }
+  .tabs button[aria-selected="true"] { color: var(--ink-deep); background: var(--ground); border-color: var(--line); }
+  [role="tabpanel"] { padding-top: 1.75rem; }
 
-  footer { margin-top: clamp(3rem, 8vw, 5rem); padding-block: 1.75rem 2.5rem; border-top: 1px solid var(--line); color: var(--muted); font-size: .95rem; }
+  .day + .day { margin-top: 2rem; }
+  .day h3 { margin: 0; padding-bottom: .5rem; border-bottom: 1px solid var(--line); font: 400 1.15rem/1.3 var(--body); color: var(--ink-deep); }
+  .day > .none { margin-top: .75rem; }
+  .incident { margin-top: 1rem; }
+  .incident h4 { margin: 0 0 .5rem; font: 400 1.15rem/1.35 var(--body); color: var(--warn); }
+  .incident[data-open] h4 { color: var(--down); }
+  .step { margin: 0 0 .9rem; }
+  .step p { margin: 0; }
+  .step strong { color: var(--ink-deep); }
+  .step time { display: block; font-size: .85rem; color: var(--muted); }
+  .none { margin: 0; color: var(--muted); }
+  .since { margin: 2.25rem 0 0; font-size: .9rem; color: var(--muted); }
+
+  .uptime-bar { display: flex; flex-wrap: wrap; justify-content: space-between; align-items: center; gap: 1rem; }
+  .uptime-bar select { font: inherit; color: var(--ink-deep); background: var(--panel); border: 1px solid var(--line); border-radius: var(--radius);
+    padding: .55rem 2rem .55rem .75rem; min-width: 14rem; appearance: none; cursor: pointer;
+    background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 12 8'%3E%3Cpath d='M1 1l5 5 5-5' fill='none' stroke='%23222a37' stroke-width='1.6'/%3E%3C/svg%3E");
+    background-repeat: no-repeat; background-position: right .75rem center; background-size: .7rem; }
+  .pager { display: flex; align-items: center; gap: .75rem; }
+  .pager button { width: 2.25rem; height: 2.25rem; display: grid; place-items: center; background: var(--ground); color: var(--ink-deep);
+    border: 1px solid var(--line); border-radius: var(--radius); cursor: pointer; }
+  .pager button:disabled { color: #b8bec8; cursor: default; }
+  .pager svg { width: .8rem; height: .8rem; }
+  .months { display: grid; grid-template-columns: repeat(3, 1fr); gap: clamp(1.25rem, 4vw, 2.25rem); margin-top: 1.75rem; }
+  .month-head { display: flex; justify-content: space-between; align-items: baseline; gap: .5rem; margin-bottom: .6rem; }
+  .month h3 { margin: 0; font: 400 1.05rem/1.3 var(--body); color: var(--ink-deep); }
+  .month .pct { font-size: .85rem; color: var(--muted); }
+  .cal { display: grid; grid-template-columns: repeat(7, 1fr); gap: 5px; }
+  .cal span { aspect-ratio: 1; border-radius: 2px; background: #eef0f3; }
+  .cal span[data-day="ok"] { background: var(--ok-bar); }
+  .cal span[data-day="some"] { background: var(--warn-bar); }
+  .cal span[data-day="bad"] { background: var(--down); }
+  .cal span[data-day="pad"] { background: none; }
+  .key { display: flex; flex-wrap: wrap; gap: .5rem 1.25rem; margin: 1.5rem 0 0; padding: 0; list-style: none; font-size: .85rem; color: var(--muted); }
+  .key li { display: inline-flex; align-items: center; gap: .4rem; }
+  .key i { width: .8rem; height: .8rem; border-radius: 2px; background: #eef0f3; }
+  .key .k-ok { background: var(--ok-bar); }
+  .key .k-some { background: var(--warn-bar); }
+  .key .k-bad { background: var(--down); }
+
+  footer { margin-top: clamp(3rem, 8vw, 5rem); padding-block: 1.5rem 2.5rem; border-top: 1px solid var(--line); color: var(--muted); font-size: .95rem; }
+  footer .wrap { display: flex; flex-wrap: wrap; justify-content: space-between; gap: .5rem 1.5rem; }
   footer p { margin: 0; }
 
   @media (max-width: 34rem) {
     .bars { gap: 1px; height: 26px; }
     .part { padding-inline: 1rem; }
     .brand img { height: 38px; }
+    .tabs button { padding-inline: .9rem; }
+    .uptime-bar label, .uptime-bar select { width: 100%; min-width: 0; }
+    .pager { width: 100%; justify-content: space-between; }
+    .months { grid-template-columns: 1fr; }
+  }
+  @media (min-width: 34.01rem) and (max-width: 44rem) {
+    .months { grid-template-columns: repeat(2, 1fr); }
   }
 </style>
 </head>
@@ -135,15 +179,38 @@
 <main class="wrap">
   <section class="parts" aria-label="Each part of the school's website" id="parts"></section>
 
-  <section class="problems" aria-labelledby="problems-title">
-    <h2 id="problems-title">Recent problems</h2>
-    <div id="problem-list"><p class="none">Loading.</p></div>
+  <section class="history" aria-label="History">
+    <div class="tabs" role="tablist" aria-label="History">
+      <button type="button" role="tab" id="tab-incidents" aria-controls="panel-incidents" aria-selected="true">Past problems</button>
+      <button type="button" role="tab" id="tab-uptime" aria-controls="panel-uptime" aria-selected="false" tabindex="-1">Uptime</button>
+    </div>
+    <div role="tabpanel" id="panel-incidents" aria-labelledby="tab-incidents">
+      <div id="problem-list"><p class="none">Loading.</p></div>
+    </div>
+    <div role="tabpanel" id="panel-uptime" aria-labelledby="tab-uptime" hidden>
+      <div class="uptime-bar">
+        <label><span class="visually-hidden">Part of the website</span><select id="uptime-part"></select></label>
+        <div class="pager">
+          <button type="button" id="uptime-prev" aria-label="Earlier months"><svg viewBox="0 0 8 12" aria-hidden="true"><path d="M6.5 1 1.5 6l5 5" fill="none" stroke="currentColor" stroke-width="1.8"/></svg></button>
+          <span id="uptime-range" aria-live="polite"></span>
+          <button type="button" id="uptime-next" aria-label="Later months"><svg viewBox="0 0 8 12" aria-hidden="true"><path d="m1.5 1 5 5-5 5" fill="none" stroke="currentColor" stroke-width="1.8"/></svg></button>
+        </div>
+      </div>
+      <div class="months" id="uptime-months"></div>
+      <ul class="key" aria-hidden="true">
+        <li><i class="k-ok"></i>No problems</li>
+        <li><i class="k-some"></i>Down under an hour</li>
+        <li><i class="k-bad"></i>Down an hour or more</li>
+        <li><i></i>Not checked</li>
+      </ul>
+    </div>
   </section>
 </main>
 
 <footer>
   <div class="wrap">
-    <p>Something not working that is not listed here? Email <a href="mailto:info@daltonsbio.com">info@daltonsbio.com</a>.</p>
+    <p><a href="https://www.daltonsbio.com">Back to the school</a></p>
+    <p>Checked every five minutes</p>
   </div>
 </footer>
 
@@ -164,7 +231,11 @@
   const esc = (s) => String(s).replace(/[&<>"']/g, (c) => ({ "&": "&amp;", "<": "&lt;", ">": "&gt;", '"': "&quot;", "'": "&#39;" })[c]);
   const dayKey = (d) => d.toISOString().slice(0, 10);
   const longDate = (d) => d.toLocaleDateString("en-CA", { day: "numeric", month: "long", year: "numeric" });
-  const stamp = (d) => d.toLocaleString("en-CA", { day: "numeric", month: "long", hour: "numeric", minute: "2-digit" });
+  const stamp = (d) => d.toLocaleString("en-CA", { day: "numeric", month: "short", hour: "numeric", minute: "2-digit", timeZoneName: "short" });
+  const localKey = (d) => `${d.getFullYear()}-${String(d.getMonth() + 1).padStart(2, "0")}-${String(d.getDate()).padStart(2, "0")}`;
+  const HISTORY_DAYS = 14;
+  // Checks are kept per part; the history pages need them after the first load.
+  const data = { bySlug: {}, starts: {} };
 
   function ago(date) {
     const mins = Math.round((Date.now() - date.getTime()) / 60000);
@@ -220,6 +291,7 @@
     const b = bars(start, (row && row.dailyMinutesDown) || {});
     const summary = b.checkedDays === 0 ? "No checks yet"
       : b.downDays === 0 ? (b.checkedDays === 1 ? "No problems today" : `No problems in the last ${b.checkedDays} days`)
+      : b.checkedDays === 1 ? "Problems today"
       : `Problems on ${b.downDays} of the last ${b.checkedDays} days`;
     return `<article class="part">
       <div class="part-head">
@@ -238,6 +310,9 @@
       ...PARTS.map((p) => text(`history/${p.slug}.yml`).catch(() => "")),
     ]);
     const bySlug = Object.fromEntries(summary.map((r) => [r.slug, r]));
+    data.bySlug = bySlug;
+    PARTS.forEach((p, i) => { data.starts[p.slug] = new Date(field(histories[i], "startTime") || Date.now()); });
+    renderUptime();
     $("parts").innerHTML = PARTS.map((p, i) => partHtml(p, bySlug[p.slug], histories[i])).join("");
 
     const down = PARTS.filter((p) => bySlug[p.slug] && bySlug[p.slug].status === "down");
@@ -276,45 +351,146 @@
   const isAuto = (issue) => (issue.labels || []).some((l) => (l.name || l) === "status");
   const isAutoComment = (c) => /^\*\*Resolved:\*\*/.test(c.body || "") || /upptime/i.test(c.body || "");
 
-  async function loadProblems() {
-    const since = new Date(Date.now() - DAYS * DAY).toISOString();
-    const r = await fetch(`https://api.github.com/repos/${REPO}/issues?state=all&since=${since}&per_page=20`, { headers: { Accept: "application/vnd.github+json" } });
-    if (!r.ok) throw new Error("issues");
-    const issues = (await r.json()).filter((i) => !i.pull_request && trusted(i) && new Date(i.created_at) >= new Date(since));
-    if (issues.length === 0) {
-      $("problem-list").innerHTML = `<p class="none">No problems reported.</p>`;
-      return;
-    }
-    const withUpdates = await Promise.all(issues.map(async (i) => {
-      let updates = [];
-      if (i.comments > 0) {
-        const c = await fetch(i.comments_url, { headers: { Accept: "application/vnd.github+json" } }).then((x) => (x.ok ? x.json() : [])).catch(() => []);
-        updates = c.filter((u) => trusted(u) && !isAutoComment(u));
-      }
-      const note = !isAuto(i) && i.body ? [{ body: i.body, created_at: i.created_at }] : [];
-      return { i, updates: [...note, ...updates] };
-    }));
-    $("problem-list").innerHTML = `<ol>${withUpdates.map(({ i, updates }) => {
-      const opened = new Date(i.created_at);
-      const status = i.state === "open"
-        ? `<span class="open">Ongoing</span>, started ${esc(stamp(opened))}`
-        : `<span class="closed">Resolved</span> ${esc(stamp(new Date(i.closed_at)))}, started ${esc(stamp(opened))}`;
-      return `<li class="problem">
-        <h3>${esc(plainTitle(i.title, isAuto(i)))}</h3>
-        <p class="when">${status}</p>
-        ${updates.map((u) => `<div class="update"><time datetime="${esc(u.created_at)}">${esc(stamp(new Date(u.created_at)))}</time><p>${esc(u.body)}</p></div>`).join("")}
-      </li>`;
-    }).join("")}</ol>`;
+  // An update can start with the stage it reports, "Identified: ..." and so on.
+  const STAGES = ["Investigating", "Identified", "Update", "Monitoring", "Resolved"];
+  function step(body, at) {
+    const m = new RegExp(`^\\s*\\**(${STAGES.join("|")})\\**\\s*[:\\-\u2013\u2014]\\s*`, "i").exec(body);
+    const stage = m ? STAGES.find((x) => x.toLowerCase() === m[1].toLowerCase()) : "Update";
+    return { stage, text: m ? body.slice(m[0].length) : body, at: new Date(at) };
   }
 
-  loadParts().catch(() => {
+  function incidentHtml(i, steps) {
+    const all = [...steps];
+    const auto = isAuto(i);
+    const part = auto && PARTS.find((p) => plainTitle(i.title, true).startsWith(p.name));
+    if (!all.length || auto) {
+      all.unshift({ stage: "Investigating", at: new Date(i.created_at),
+        text: part ? `Our checks found that ${part.name.toLowerCase()} stopped working. We are looking into it.` : "We are looking into it." });
+    }
+    if (i.state === "closed" && !all.some((x) => x.stage === "Resolved")) {
+      all.push({ stage: "Resolved", at: new Date(i.closed_at), text: "This is fixed and working normally again." });
+    }
+    all.sort((x, y) => y.at - x.at);
+    return `<article class="incident"${i.state === "open" ? " data-open" : ""}>
+      <h4>${esc(plainTitle(i.title, auto))}</h4>
+      ${all.map((x) => `<div class="step"><p><strong>${esc(x.stage)}</strong> - ${esc(x.text)}</p><time datetime="${esc(x.at.toISOString())}">${esc(stamp(x.at))}</time></div>`).join("")}
+    </article>`;
+  }
+
+  async function loadProblems() {
+    const since = new Date(Date.now() - HISTORY_DAYS * DAY).toISOString();
+    const r = await fetch(`https://api.github.com/repos/${REPO}/issues?state=all&since=${since}&per_page=30`, { headers: { Accept: "application/vnd.github+json" } });
+    if (!r.ok) throw new Error("issues");
+    const issues = (await r.json()).filter((i) => !i.pull_request && trusted(i));
+    const withSteps = await Promise.all(issues.map(async (i) => {
+      let comments = [];
+      if (i.comments > 0) {
+        const c = await fetch(i.comments_url, { headers: { Accept: "application/vnd.github+json" } }).then((x) => (x.ok ? x.json() : [])).catch(() => []);
+        comments = c.filter((u) => trusted(u) && !isAutoComment(u));
+      }
+      const note = !isAuto(i) && i.body ? [step(i.body, i.created_at)] : [];
+      return { i, steps: [...note, ...comments.map((u) => step(u.body || "", u.created_at))] };
+    }));
+
+    // One heading per day, newest first, back to the day the checks began.
+    const began = new Date(Math.min(...Object.values(data.starts).map(Number), Date.now()));
+    const firstDay = new Date(Math.max(began.getTime(), Date.now() - (HISTORY_DAYS - 1) * DAY));
+    firstDay.setHours(0, 0, 0, 0);
+    const days = [];
+    for (let d = new Date(); d >= firstDay; d = new Date(d.getFullYear(), d.getMonth(), d.getDate() - 1)) days.push(d);
+    const todayKey = localKey(new Date());
+    $("problem-list").innerHTML = days.map((d) => {
+      const key = localKey(d);
+      const here = withSteps.filter(({ i }) => localKey(new Date(i.created_at)) === key);
+      const label = d.toLocaleDateString("en-CA", { month: "short", day: "numeric", year: "numeric" });
+      return `<section class="day"><h3>${esc(label)}</h3>${here.length
+        ? here.map(({ i, steps }) => incidentHtml(i, steps)).join("")
+        : `<p class="none">${key === todayKey ? "No problems reported today." : "No problems reported."}</p>`}</section>`;
+    }).join("") + (began > new Date(Date.now() - HISTORY_DAYS * DAY)
+      ? `<p class="since">Checks began on ${esc(longDate(began))}.</p>` : "");
+  }
+
+  // Uptime: three months at a time for one part, like a calendar.
+  let monthOffset = 0;
+  // As many months as fit side by side: one on a phone, two on a tablet, three wider.
+  const narrow = matchMedia("(max-width: 34rem)"), middle = matchMedia("(max-width: 44rem)");
+  const perView = () => (narrow.matches ? 1 : middle.matches ? 2 : 3);
+  function monthHtml(year, month, slug) {
+    const start = data.starts[slug];
+    const startDay = new Date(start.getFullYear(), start.getMonth(), start.getDate());
+    const today = new Date(); today.setHours(0, 0, 0, 0);
+    const mins = (data.bySlug[slug] && data.bySlug[slug].dailyMinutesDown) || {};
+    const first = new Date(year, month, 1);
+    const count = new Date(year, month + 1, 0).getDate();
+    let cells = "", checked = 0, down = 0;
+    for (let k = 0; k < first.getDay(); k++) cells += `<span data-day="pad"></span>`;
+    for (let n = 1; n <= count; n++) {
+      const d = new Date(year, month, n);
+      let state = "none", label = `${longDate(d)}: not checked`;
+      if (d >= startDay && d <= today) {
+        const m = Math.min(Number(mins[dayKey(new Date(Date.UTC(year, month, n)))] || 0), 1440);
+        checked++; down += m;
+        state = m === 0 ? "ok" : m >= 60 ? "bad" : "some";
+        label = m === 0 ? `${longDate(d)}: no problems` : `${longDate(d)}: down for ${m} minute${m === 1 ? "" : "s"}`;
+      }
+      cells += `<span data-day="${state}" title="${esc(label)}"></span>`;
+    }
+    const name = first.toLocaleDateString("en-CA", { month: "long", year: "numeric" });
+    const pct = checked ? `${(100 * (1 - down / (checked * 1440))).toFixed(2)}%` : "No data";
+    return `<div class="month"><div class="month-head"><h3>${esc(name)}</h3><span class="pct">${pct}</span></div>
+      <div class="cal" role="img" aria-label="${esc(name)}: ${checked ? `${pct} uptime` : "not checked"}">${cells}</div></div>`;
+  }
+
+  function renderUptime() {
+    const select = $("uptime-part");
+    if (!select.options.length) select.innerHTML = PARTS.map((p) => `<option value="${p.slug}">${esc(p.name)}</option>`).join("");
+    const slug = select.value;
+    const now = new Date();
+    const count = perView();
+    const months = Array.from({ length: count }, (_, k) => new Date(now.getFullYear(), now.getMonth() - (count - 1 - k) - monthOffset, 1));
+    $("uptime-months").innerHTML = months.map((m) => monthHtml(m.getFullYear(), m.getMonth(), slug)).join("");
+    const fmt = (m) => m.toLocaleDateString("en-CA", { month: "long", year: "numeric" });
+    $("uptime-range").textContent = count === 1 ? fmt(months[0]) : `${fmt(months[0])} to ${fmt(months[count - 1])}`;
+    const start = data.starts[slug];
+    $("uptime-prev").disabled = !start || months[0] <= new Date(start.getFullYear(), start.getMonth(), 1);
+    $("uptime-next").disabled = monthOffset === 0;
+  }
+  $("uptime-part").addEventListener("change", () => { monthOffset = 0; renderUptime(); });
+  $("uptime-prev").addEventListener("click", () => { monthOffset += perView(); renderUptime(); });
+  $("uptime-next").addEventListener("click", () => { monthOffset = Math.max(0, monthOffset - perView()); renderUptime(); });
+  [narrow, middle].forEach((m) => m.addEventListener("change", () => { monthOffset = 0; if (Object.keys(data.starts).length) renderUptime(); }));
+
+  // Tabs: click, or the arrow keys once a tab has focus. The address keeps the choice.
+  const tabs = [...document.querySelectorAll('[role="tab"]')];
+  function choose(tab, focus) {
+    tabs.forEach((t) => {
+      const on = t === tab;
+      t.setAttribute("aria-selected", String(on));
+      t.tabIndex = on ? 0 : -1;
+      $(t.getAttribute("aria-controls")).hidden = !on;
+    });
+    if (focus) tab.focus();
+    history.replaceState(null, "", tab.id === "tab-uptime" ? "#uptime" : location.pathname);
+  }
+  tabs.forEach((t, n) => {
+    t.addEventListener("click", () => choose(t));
+    t.addEventListener("keydown", (e) => {
+      const to = e.key === "ArrowRight" ? n + 1 : e.key === "ArrowLeft" ? n - 1 : e.key === "Home" ? 0 : e.key === "End" ? tabs.length - 1 : null;
+      if (to === null) return;
+      e.preventDefault();
+      choose(tabs[(to + tabs.length) % tabs.length], true);
+    });
+  });
+  if (location.hash === "#uptime") choose($("tab-uptime"));
+
+  const parts = loadParts().catch(() => {
     document.body.dataset.overall = "unknown";
     $("headline").textContent = "We could not load the latest checks";
-    $("checked").textContent = "Refresh the page in a minute. If something is not working for you, email info@daltonsbio.com.";
+    $("checked").textContent = "Refresh the page in a minute.";
   });
-  loadProblems().catch(() => {
-    $("problem-list").innerHTML = `<p class="none">Recent problems could not be loaded. Refresh the page in a minute.</p>`;
-  });
+  parts.finally(() => loadProblems().catch(() => {
+    $("problem-list").innerHTML = `<p class="none">Past problems could not be loaded. Refresh the page in a minute.</p>`;
+  }));
 })();
 </script>
 </body>
