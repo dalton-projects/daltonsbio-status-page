@@ -137,7 +137,10 @@
   .key .k-some { background: var(--warn-bar); }
   .key .k-bad { background: var(--down); }
 
-  footer { margin-top: clamp(3rem, 8vw, 5rem); padding-block: 1.5rem 2.5rem; border-top: 1px solid var(--line); color: var(--muted); font-size: .95rem; }
+  footer { margin-top: clamp(3rem, 8vw, 5rem); padding-block: 1.4rem; border-top: 1px solid var(--line); color: var(--muted); font-size: clamp(.8rem, .78rem + .1vw, .86rem); }
+  footer .legal { display: flex; gap: 1.25rem; }
+  footer .legal a { color: var(--muted); }
+  footer .legal a:hover { color: var(--primary); }
   footer .wrap { display: flex; flex-wrap: wrap; justify-content: space-between; gap: .5rem 1.5rem; }
   footer p { margin: 0; }
 
@@ -209,8 +212,8 @@
 
 <footer>
   <div class="wrap">
-    <p><a href="https://www.daltonsbio.com">Back to the school</a></p>
-    <p>Checked every five minutes</p>
+    <p>&copy; <span id="year">2026</span> Michael D'Alton's School of Bio-Energy Healing. All rights reserved.</p>
+    <p class="legal"><a href="https://www.daltonsbio.com/privacy-policy">Privacy Policy</a><a href="https://www.daltonsbio.com/terms-of-service">Terms of Service</a></p>
   </div>
 </footer>
 
@@ -228,6 +231,7 @@
   ];
 
   const $ = (id) => document.getElementById(id);
+  $("year").textContent = new Date().getFullYear();
   const esc = (s) => String(s).replace(/[&<>"']/g, (c) => ({ "&": "&amp;", "<": "&lt;", ">": "&gt;", '"': "&quot;", "'": "&#39;" })[c]);
   const dayKey = (d) => d.toISOString().slice(0, 10);
   const longDate = (d) => d.toLocaleDateString("en-CA", { day: "numeric", month: "long", year: "numeric" });
