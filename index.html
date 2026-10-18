@@ -4,6 +4,8 @@
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width, initial-scale=1">
 <meta name="color-scheme" content="light">
+<meta http-equiv="Content-Security-Policy" content="default-src 'none'; script-src 'self'; style-src 'self' 'unsafe-inline' https://fonts.googleapis.com; font-src https://fonts.gstatic.com; img-src 'self' data:; connect-src https://raw.githubusercontent.com https://api.github.com; base-uri 'none'; form-action 'none'">
+<meta name="referrer" content="strict-origin-when-cross-origin">
 <title>Status | D'Alton's School of Bio-Energy Healing</title>
 <meta name="description" content="Whether the D'Alton's School of Bio-Energy Healing website, sign in, checkout and lessons are working right now.">
 <link rel="icon" href="favicon.png" type="image/png">
@@ -68,6 +70,7 @@
     color: var(--ink-deep);
     letter-spacing: -.01em;
   }
+  .visually-hidden { position: absolute; width: 1px; height: 1px; overflow: hidden; clip: rect(0 0 0 0); white-space: nowrap; }
   .answer p { margin: .9rem 0 0; color: var(--sub); max-width: 52ch; }
 
   .parts { border: 1px solid var(--line); border-radius: var(--radius); }
@@ -87,27 +90,73 @@
   .bar-scale { display: flex; justify-content: space-between; gap: 1rem; margin-top: .35rem; font-size: .8rem; color: var(--muted); white-space: nowrap; }
   .bar-summary { margin: .3rem 0 0; font-size: .95rem; color: var(--ink); }
 
-  .problems { padding-block: clamp(2.5rem, 6vw, 3.5rem) 0; }
-  .problems h2 { margin: 0 0 1rem; font: 700 1.45rem/1.3 var(--display); color: var(--ink-deep); }
-  .problems ol { list-style: none; margin: 0; padding: 0; }
-  .problem { padding: 1.1rem 0; border-top: 1px solid var(--line); }
-  .problem:last-child { border-bottom: 1px solid var(--line); }
-  .problem h3 { margin: 0; font: 700 1.05rem/1.4 var(--body); color: var(--ink-deep); }
-  .problem .when { margin: .2rem 0 0; font-size: .9rem; color: var(--muted); }
-  .problem .open { color: var(--down); font-weight: 700; }
-  .problem .closed { color: var(--ok); font-weight: 700; }
-  .update { margin: .75rem 0 0; padding-left: .9rem; border-left: 3px solid var(--line); }
-  .update p { margin: 0; }
-  .update time { display: block; font-size: .85rem; color: var(--muted); }
-  .none { margin: 0; color: var(--muted); }
+  .history { padding-top: clamp(2.75rem, 7vw, 4rem); }
+  .tabs { display: flex; gap: .25rem; border-bottom: 1px solid var(--line); }
+  .tabs button { font: 400 1rem/1 var(--body); color: var(--muted); background: none; cursor: pointer;
+    border: 1px solid transparent; border-bottom: 0; border-radius: var(--radius) var(--radius) 0 0;
+    padding: .85rem 1.15rem; margin-bottom: -1px; }
+  .tabs button:hover { color: var(--ink-deep); }
+  .tabs button[aria-selected="true"] { color: var(--ink-deep); background: var(--ground); border-color: var(--line); }
+  [role="tabpanel"] { padding-top: 1.75rem; }
 
-  footer { margin-top: clamp(3rem, 8vw, 5rem); padding-block: 1.75rem 2.5rem; border-top: 1px solid var(--line); color: var(--muted); font-size: .95rem; }
+  .day + .day { margin-top: 2rem; }
+  .day h3 { margin: 0; padding-bottom: .5rem; border-bottom: 1px solid var(--line); font: 400 1.15rem/1.3 var(--body); color: var(--ink-deep); }
+  .day > .none { margin-top: .75rem; }
+  .incident { margin-top: 1rem; }
+  .incident h4 { margin: 0 0 .5rem; font: 400 1.15rem/1.35 var(--body); color: var(--warn); }
+  .incident[data-open] h4 { color: var(--down); }
+  .step { margin: 0 0 .9rem; }
+  .step p { margin: 0; }
+  .step strong { color: var(--ink-deep); }
+  .step time { display: block; font-size: .85rem; color: var(--muted); }
+  .none { margin: 0; color: var(--muted); }
+  .since { margin: 2.25rem 0 0; font-size: .9rem; color: var(--muted); }
+
+  .uptime-bar { display: flex; flex-wrap: wrap; justify-content: space-between; align-items: center; gap: 1rem; }
+  .uptime-bar select { font: inherit; color: var(--ink-deep); background: var(--panel); border: 1px solid var(--line); border-radius: var(--radius);
+    padding: .55rem 2rem .55rem .75rem; min-width: 14rem; appearance: none; cursor: pointer;
+    background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 12 8'%3E%3Cpath d='M1 1l5 5 5-5' fill='none' stroke='%23222a37' stroke-width='1.6'/%3E%3C/svg%3E");
+    background-repeat: no-repeat; background-position: right .75rem center; background-size: .7rem; }
+  .pager { display: flex; align-items: center; gap: .75rem; }
+  .pager button { width: 2.25rem; height: 2.25rem; display: grid; place-items: center; background: var(--ground); color: var(--ink-deep);
+    border: 1px solid var(--line); border-radius: var(--radius); cursor: pointer; }
+  .pager button:disabled { color: #b8bec8; cursor: default; }
+  .pager svg { width: .8rem; height: .8rem; }
+  .months { display: grid; grid-template-columns: repeat(3, 1fr); gap: clamp(1.25rem, 4vw, 2.25rem); margin-top: 1.75rem; }
+  .month-head { display: flex; justify-content: space-between; align-items: baseline; gap: .5rem; margin-bottom: .6rem; }
+  .month h3 { margin: 0; font: 400 1.05rem/1.3 var(--body); color: var(--ink-deep); }
+  .month .pct { font-size: .85rem; color: var(--muted); }
+  .cal { display: grid; grid-template-columns: repeat(7, 1fr); gap: 5px; }
+  .cal span { aspect-ratio: 1; border-radius: 2px; background: #eef0f3; }
+  .cal span[data-day="ok"] { background: var(--ok-bar); }
+  .cal span[data-day="some"] { background: var(--warn-bar); }
+  .cal span[data-day="bad"] { background: var(--down); }
+  .cal span[data-day="pad"] { background: none; }
+  .key { display: flex; flex-wrap: wrap; gap: .5rem 1.25rem; margin: 1.5rem 0 0; padding: 0; list-style: none; font-size: .85rem; color: var(--muted); }
+  .key li { display: inline-flex; align-items: center; gap: .4rem; }
+  .key i { width: .8rem; height: .8rem; border-radius: 2px; background: #eef0f3; }
+  .key .k-ok { background: var(--ok-bar); }
+  .key .k-some { background: var(--warn-bar); }
+  .key .k-bad { background: var(--down); }
+
+  footer { margin-top: clamp(3rem, 8vw, 5rem); padding-block: 1.4rem; border-top: 1px solid var(--line); color: var(--muted); font-size: clamp(.8rem, .78rem + .1vw, .86rem); }
+  footer .legal { display: flex; gap: 1.25rem; }
+  footer .legal a { color: var(--muted); }
+  footer .legal a:hover { color: var(--primary); }
+  footer .wrap { display: flex; flex-wrap: wrap; justify-content: space-between; gap: .5rem 1.5rem; }
   footer p { margin: 0; }
 
   @media (max-width: 34rem) {
     .bars { gap: 1px; height: 26px; }
     .part { padding-inline: 1rem; }
     .brand img { height: 38px; }
+    .tabs button { padding-inline: .9rem; }
+    .uptime-bar label, .uptime-bar select { width: 100%; min-width: 0; }
+    .pager { width: 100%; justify-content: space-between; }
+    .months { grid-template-columns: 1fr; }
+  }
+  @media (min-width: 34.01rem) and (max-width: 44rem) {
+    .months { grid-template-columns: repeat(2, 1fr); }
   }
 </style>
 </head>
@@ -135,187 +184,41 @@
 <main class="wrap">
   <section class="parts" aria-label="Each part of the school's website" id="parts"></section>
 
-  <section class="problems" aria-labelledby="problems-title">
-    <h2 id="problems-title">Recent problems</h2>
-    <div id="problem-list"><p class="none">Loading.</p></div>
+  <section class="history" aria-label="History">
+    <div class="tabs" role="tablist" aria-label="History">
+      <button type="button" role="tab" id="tab-incidents" aria-controls="panel-incidents" aria-selected="true">Past problems</button>
+      <button type="button" role="tab" id="tab-uptime" aria-controls="panel-uptime" aria-selected="false" tabindex="-1">Uptime</button>
+    </div>
+    <div role="tabpanel" id="panel-incidents" aria-labelledby="tab-incidents">
+      <div id="problem-list"><p class="none">Loading.</p></div>
+    </div>
+    <div role="tabpanel" id="panel-uptime" aria-labelledby="tab-uptime" hidden>
+      <div class="uptime-bar">
+        <label><span class="visually-hidden">Part of the website</span><select id="uptime-part"></select></label>
+        <div class="pager">
+          <button type="button" id="uptime-prev" aria-label="Earlier months"><svg viewBox="0 0 8 12" aria-hidden="true"><path d="M6.5 1 1.5 6l5 5" fill="none" stroke="currentColor" stroke-width="1.8"/></svg></button>
+          <span id="uptime-range" aria-live="polite"></span>
+          <button type="button" id="uptime-next" aria-label="Later months"><svg viewBox="0 0 8 12" aria-hidden="true"><path d="m1.5 1 5 5-5 5" fill="none" stroke="currentColor" stroke-width="1.8"/></svg></button>
+        </div>
+      </div>
+      <div class="months" id="uptime-months"></div>
+      <ul class="key" aria-hidden="true">
+        <li><i class="k-ok"></i>No problems</li>
+        <li><i class="k-some"></i>Down under an hour</li>
+        <li><i class="k-bad"></i>Down an hour or more</li>
+        <li><i></i>Not checked</li>
+      </ul>
+    </div>
   </section>
 </main>
 
 <footer>
   <div class="wrap">
-    <p>Something not working that is not listed here? Email <a href="mailto:info@daltonsbio.com">info@daltonsbio.com</a>.</p>
+    <p>&copy; <span id="year">2026</span> Michael D'Alton's School of Bio-Energy Healing. All rights reserved.</p>
+    <p class="legal"><a href="https://www.daltonsbio.com/privacy-policy">Privacy Policy</a><a href="https://www.daltonsbio.com/terms-of-service">Terms of Service</a></p>
   </div>
 </footer>
 
-<script>
-(() => {
-  const REPO = "dalton-projects/daltonsbio-status";
-  const RAW = `https://raw.githubusercontent.com/${REPO}/master`;
-  const DAYS = 90;
-  const DAY = 24 * 60 * 60 * 1000;
-  const PARTS = [
-    { slug: "website", name: "Website", what: "The school's pages and blog", trouble: "The website is having problems" },
-    { slug: "signing-in", name: "Signing in", what: "Your account, dashboard and progress", trouble: "Signing in is having problems" },
-    { slug: "buying-a-course", name: "Buying a course", what: "Checkout and payments", trouble: "Buying a course is having problems" },
-    { slug: "lessons", name: "Lessons", what: "Course videos, audio and downloads", trouble: "Lessons are having problems" },
-  ];
-
-  const $ = (id) => document.getElementById(id);
-  const esc = (s) => String(s).replace(/[&<>"']/g, (c) => ({ "&": "&amp;", "<": "&lt;", ">": "&gt;", '"': "&quot;", "'": "&#39;" })[c]);
-  const dayKey = (d) => d.toISOString().slice(0, 10);
-  const longDate = (d) => d.toLocaleDateString("en-CA", { day: "numeric", month: "long", year: "numeric" });
-  const stamp = (d) => d.toLocaleString("en-CA", { day: "numeric", month: "long", hour: "numeric", minute: "2-digit" });
-
-  function ago(date) {
-    const mins = Math.round((Date.now() - date.getTime()) / 60000);
-    if (mins < 1) return "less than a minute ago";
-    if (mins === 1) return "1 minute ago";
-    if (mins < 60) return `${mins} minutes ago`;
-    const hours = Math.round(mins / 60);
-    return hours === 1 ? "1 hour ago" : `${hours} hours ago`;
-  }
-
-  function list(words) {
-    return words.length < 2 ? words.join("") : `${words.slice(0, -1).join(", ")} and ${words.at(-1)}`;
-  }
-
-  async function text(path) {
-    const r = await fetch(`${RAW}/${path}?t=${Math.floor(Date.now() / 60000)}`);
-    if (!r.ok) throw new Error(path);
-    return r.text();
-  }
-
-  function field(yaml, name) {
-    const m = new RegExp(`^${name}:\\s*(.+)$`, "m").exec(yaml);
-    return m ? m[1].trim() : null;
-  }
-
-  function bars(start, minutesDown) {
-    const today = new Date(); today.setUTCHours(0, 0, 0, 0);
-    const first = new Date(start); first.setUTCHours(0, 0, 0, 0);
-    let html = "", downDays = 0, checkedDays = 0;
-    for (let i = DAYS - 1; i >= 0; i--) {
-      const day = new Date(today.getTime() - i * DAY);
-      const key = dayKey(day);
-      let state = "none", label = `${longDate(day)}: not checked yet`;
-      if (day >= first) {
-        checkedDays++;
-        const mins = Number(minutesDown[key] || 0);
-        if (mins === 0) { state = "ok"; label = `${longDate(day)}: no problems`; }
-        else {
-          downDays++;
-          state = mins >= 60 ? "bad" : "some";
-          label = `${longDate(day)}: down for ${mins} minute${mins === 1 ? "" : "s"}`;
-        }
-      }
-      html += `<span data-day="${state}" title="${esc(label)}"></span>`;
-    }
-    return { html, downDays, checkedDays };
-  }
-
-  function partHtml(p, row, history) {
-    const state = row ? row.status : "unknown";
-    const word = state === "up" ? "Working" : state === "down" ? "Down" : "Not checked yet";
-    const start = field(history, "startTime") || new Date().toISOString();
-    const b = bars(start, (row && row.dailyMinutesDown) || {});
-    const summary = b.checkedDays === 0 ? "No checks yet"
-      : b.downDays === 0 ? (b.checkedDays === 1 ? "No problems today" : `No problems in the last ${b.checkedDays} days`)
-      : `Problems on ${b.downDays} of the last ${b.checkedDays} days`;
-    return `<article class="part">
-      <div class="part-head">
-        <div><h2>${esc(p.name)}</h2><p class="what">${esc(p.what)}</p></div>
-        <span class="state" data-state="${state}">${word}</span>
-      </div>
-      <div class="bars" role="img" aria-label="${esc(p.name)}, last ${DAYS} days: ${esc(summary)}">${b.html}</div>
-      <div class="bar-scale" aria-hidden="true"><span>${DAYS} days ago</span><span>Today</span></div>
-      <p class="bar-summary">${esc(summary)}</p>
-    </article>`;
-  }
-
-  async function loadParts() {
-    const [summary, ...histories] = await Promise.all([
-      text("history/summary.json").then(JSON.parse),
-      ...PARTS.map((p) => text(`history/${p.slug}.yml`).catch(() => "")),
-    ]);
-    const bySlug = Object.fromEntries(summary.map((r) => [r.slug, r]));
-    $("parts").innerHTML = PARTS.map((p, i) => partHtml(p, bySlug[p.slug], histories[i])).join("");
-
-    const down = PARTS.filter((p) => bySlug[p.slug] && bySlug[p.slug].status === "down");
-    document.body.dataset.overall = down.length ? "down" : "ok";
-    $("headline").textContent = down.length === 0 ? "Everything is working"
-      : down.length === PARTS.length ? "The school's website is down"
-      : down.length === 1 ? down[0].trouble
-      : `${list(down.map((p) => p.name.toLowerCase())).replace(/^./, (c) => c.toUpperCase())} are having problems`;
-
-    // The history files only change when a part goes up or down, so the time of
-    // the last check comes from the checking job itself.
-    const last = await fetch(`https://api.github.com/repos/${REPO}/actions/workflows/uptime.yml/runs?status=success&per_page=1`, { headers: { Accept: "application/vnd.github+json" } })
-      .then((r) => (r.ok ? r.json() : null))
-      .then((j) => (j && j.workflow_runs && j.workflow_runs[0] ? new Date(j.workflow_runs[0].updated_at) : null))
-      .catch(() => null);
-    // GitHub runs scheduled checks a little late at busy times; only an hour of
-    // silence is worth telling people about.
-    const late = last && Date.now() - last.getTime() > 60 * 60000;
-    const when = !last ? "" : late ? ` Last checked ${ago(last)}, so these results may be out of date.` : ` Last checked ${ago(last)}.`;
-    $("checked").textContent = down.length === 0
-      ? `We check the website, sign in, checkout and lessons around the clock.${when}`
-      : `We know about it and are working on it. Updates appear below.${when}`;
-  }
-
-  // The checker titles its issues "Lessons is down"; say it the way a person would.
-  const plainTitle = (t, auto) => {
-    const clean = t.replace(/^[^\p{L}\p{N}]+/u, "").trim();
-    const part = auto && PARTS.find((p) => clean.toLowerCase().startsWith(p.name.toLowerCase()));
-    return part ? `${part.name} stopped working` : clean;
-  };
-  // The checker's repository is public, so anyone can open an issue or comment
-  // there. Only the school's own people are shown.
-  const trusted = (x) => ["OWNER", "MEMBER", "COLLABORATOR"].includes(x.author_association);
-  // The checker files its incidents with the school's own token, so they are
-  // told apart by Upptime's "status" label and its automatic comments.
-  const isAuto = (issue) => (issue.labels || []).some((l) => (l.name || l) === "status");
-  const isAutoComment = (c) => /^\*\*Resolved:\*\*/.test(c.body || "") || /upptime/i.test(c.body || "");
-
-  async function loadProblems() {
-    const since = new Date(Date.now() - DAYS * DAY).toISOString();
-    const r = await fetch(`https://api.github.com/repos/${REPO}/issues?state=all&since=${since}&per_page=20`, { headers: { Accept: "application/vnd.github+json" } });
-    if (!r.ok) throw new Error("issues");
-    const issues = (await r.json()).filter((i) => !i.pull_request && trusted(i) && new Date(i.created_at) >= new Date(since));
-    if (issues.length === 0) {
-      $("problem-list").innerHTML = `<p class="none">No problems reported.</p>`;
-      return;
-    }
-    const withUpdates = await Promise.all(issues.map(async (i) => {
-      let updates = [];
-      if (i.comments > 0) {
-        const c = await fetch(i.comments_url, { headers: { Accept: "application/vnd.github+json" } }).then((x) => (x.ok ? x.json() : [])).catch(() => []);
-        updates = c.filter((u) => trusted(u) && !isAutoComment(u));
-      }
-      const note = !isAuto(i) && i.body ? [{ body: i.body, created_at: i.created_at }] : [];
-      return { i, updates: [...note, ...updates] };
-    }));
-    $("problem-list").innerHTML = `<ol>${withUpdates.map(({ i, updates }) => {
-      const opened = new Date(i.created_at);
-      const status = i.state === "open"
-        ? `<span class="open">Ongoing</span>, started ${esc(stamp(opened))}`
-        : `<span class="closed">Resolved</span> ${esc(stamp(new Date(i.closed_at)))}, started ${esc(stamp(opened))}`;
-      return `<li class="problem">
-        <h3>${esc(plainTitle(i.title, isAuto(i)))}</h3>
-        <p class="when">${status}</p>
-        ${updates.map((u) => `<div class="update"><time datetime="${esc(u.created_at)}">${esc(stamp(new Date(u.created_at)))}</time><p>${esc(u.body)}</p></div>`).join("")}
-      </li>`;
-    }).join("")}</ol>`;
-  }
-
-  loadParts().catch(() => {
-    document.body.dataset.overall = "unknown";
-    $("headline").textContent = "We could not load the latest checks";
-    $("checked").textContent = "Refresh the page in a minute. If something is not working for you, email info@daltonsbio.com.";
-  });
-  loadProblems().catch(() => {
-    $("problem-list").innerHTML = `<p class="none">Recent problems could not be loaded. Refresh the page in a minute.</p>`;
-  });
-})();
-</script>
+<script src="status.js"></script>
 </body>
 </html>
