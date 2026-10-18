@@ -127,7 +127,7 @@
     </span>
     <div>
       <h1 id="headline">Checking the school's services</h1>
-      <p id="checked">We check the website, sign in, checkout and lessons every five minutes.</p>
+      <p id="checked">We check the website, sign in, checkout and lessons around the clock.</p>
     </div>
   </div>
 </section>
@@ -253,10 +253,12 @@
       .then((r) => (r.ok ? r.json() : null))
       .then((j) => (j && j.workflow_runs && j.workflow_runs[0] ? new Date(j.workflow_runs[0].updated_at) : null))
       .catch(() => null);
-    const late = last && Date.now() - last.getTime() > 15 * 60000;
+    // GitHub runs scheduled checks a little late at busy times; only an hour of
+    // silence is worth telling people about.
+    const late = last && Date.now() - last.getTime() > 60 * 60000;
     const when = !last ? "" : late ? ` Last checked ${ago(last)}, so these results may be out of date.` : ` Last checked ${ago(last)}.`;
     $("checked").textContent = down.length === 0
-      ? `We check the website, sign in, checkout and lessons every five minutes.${when}`
+      ? `We check the website, sign in, checkout and lessons around the clock.${when}`
       : `We know about it and are working on it. Updates appear below.${when}`;
   }
 
