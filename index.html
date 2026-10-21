@@ -82,11 +82,11 @@
   .state { font-weight: 700; white-space: nowrap; color: var(--muted); }
   .state[data-state="up"] { color: var(--ok); }
   .state[data-state="down"] { color: var(--down); }
-  .bars { display: flex; gap: 2px; height: 30px; margin-top: 1rem; }
-  .bars span { flex: 1; border-radius: 2px; background: var(--empty); }
-  .bars span[data-day="ok"] { background: var(--ok-bar); }
-  .bars span[data-day="some"] { background: var(--warn-bar); }
-  .bars span[data-day="bad"] { background: var(--down); }
+  .bars { display: block; width: 100%; height: 30px; margin-top: 1rem; }
+  .bars rect { fill: var(--empty); }
+  .bars rect[data-day="ok"] { fill: var(--ok-bar); }
+  .bars rect[data-day="some"] { fill: var(--warn-bar); }
+  .bars rect[data-day="bad"] { fill: var(--down); }
   .bar-scale { display: flex; justify-content: space-between; gap: 1rem; margin-top: .35rem; font-size: .8rem; color: var(--muted); white-space: nowrap; }
   .bar-summary { margin: .3rem 0 0; font-size: .95rem; color: var(--ink); }
 
@@ -147,7 +147,7 @@
   footer p { margin: 0; }
 
   @media (max-width: 34rem) {
-    .bars { gap: 1px; height: 26px; }
+    .bars { height: 26px; }
     .part { padding-inline: 1rem; }
     .brand img { height: 38px; }
     .tabs button { padding-inline: .9rem; }

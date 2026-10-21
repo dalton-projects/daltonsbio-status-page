@@ -3,6 +3,9 @@
   const RAW = `https://raw.githubusercontent.com/${REPO}/master`;
   const DAYS = 90;
   const DAY = 24 * 60 * 60 * 1000;
+  // Drawn in SVG units, not CSS pixels: 90 boxes rarely divide the row's width
+  // into whole pixels, and the browser then rounds some boxes a pixel wider.
+  const BAR = 5, GAP = 2;
   const PARTS = [
     { slug: "website", name: "Website", what: "The school's pages and blog", trouble: "The website is having problems" },
     { slug: "signing-in", name: "Signing in", what: "Your account, dashboard and progress", trouble: "Signing in is having problems" },
@@ -63,7 +66,8 @@
           label = `${longDate(day)}: down for ${mins} minute${mins === 1 ? "" : "s"}`;
         }
       }
-      html += `<span data-day="${state}" title="${esc(label)}"></span>`;
+      const x = (DAYS - 1 - i) * (BAR + GAP);
+      html += `<rect x="${x}" width="${BAR}" height="30" rx="1.5" data-day="${state}"><title>${esc(label)}</title></rect>`;
     }
     return { html, downDays, checkedDays };
   }
@@ -82,7 +86,7 @@
         <div><h2>${esc(p.name)}</h2><p class="what">${esc(p.what)}</p></div>
         <span class="state" data-state="${state}">${word}</span>
       </div>
-      <div class="bars" role="img" aria-label="${esc(p.name)}, last ${DAYS} days: ${esc(summary)}">${b.html}</div>
+      <svg class="bars" viewBox="0 0 ${DAYS * (BAR + GAP) - GAP} 30" preserveAspectRatio="none" role="img" aria-label="${esc(p.name)}, last ${DAYS} days: ${esc(summary)}">${b.html}</svg>
       <div class="bar-scale" aria-hidden="true"><span>${DAYS} days ago</span><span>Today</span></div>
       <p class="bar-summary">${esc(summary)}</p>
     </article>`;
